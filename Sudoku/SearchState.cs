@@ -13,16 +13,17 @@ namespace Sudoku
         {
             _data = new int[9, 9];
 
-            for (int i; i < 9; i++)
+            foreach (var i in Enumerable.Range(0, 9))
             {
-                for (int j; j < 9; j++)
+                foreach (var j in Enumerable.Range(0, 9))
                 {
                     _data[i, j] = (int)Numbers.Any;
                 }
             }
         }
 
-        public bool IsSolution => throw new NotImplementedException();
+        public bool IsSolution  => 
+            Enumerable.Range(0, 9).All(i => Enumerable.Range(0, 9).All(j => this[i, j].HasValue));
 
         public int? this[int x, int y]
         {
@@ -44,6 +45,29 @@ namespace Sudoku
                     _data[x, y] = (int)Math.Pow(2, value.Value);
                 }
             }
+        }
+
+        public string Pretty()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var j in Enumerable.Range(0, 9))
+            {
+                foreach (var i in Enumerable.Range(0, 9))
+                {
+                    if (i > 0 && i % 3 == 0) sb.Append("║");
+                    else if (i > 0) sb.Append("|");
+                    var val = this[i, j];
+                    sb.Append(val.HasValue ? val.Value.ToString() : " ");
+                }
+
+                sb.AppendLine();
+
+                if (j > 0 && (j + 1) % 3 == 0 && j < 8) sb.AppendLine(string.Join('╬', Enumerable.Repeat("═╬═╬═", 3)));
+                else if (j < 8) sb.AppendLine(string.Join('╬', Enumerable.Repeat("─┼─┼─", 3)));
+            }
+
+            return sb.ToString();
         }
 
         public bool CanBe(int x, int y, int val)
