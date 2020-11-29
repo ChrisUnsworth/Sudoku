@@ -80,7 +80,6 @@ namespace Sudoku.Tests
         [TestMethod]
         public void PrettyTest()
         {
-
             var s = new SearchState();
 
             var sb = new StringBuilder();
@@ -135,6 +134,78 @@ namespace Sudoku.Tests
             sb.AppendLine(" | |7║ | | ║ | | ");
 
             Assert.AreEqual(sb.ToString(), s.Pretty());
+        }
+
+        [TestMethod]
+        public void ArrayConstructorTest()
+        {
+            var data = new int[,]
+            {
+                { 3, 8, 2, 9, 0, 0, 0, 0, 1 },
+                { 0, 0, 0, 0, 0, 0, 0, 5, 2 },
+                { 0, 1, 0, 0, 2, 7, 3, 0, 0 },
+                { 0, 0, 0, 0, 4, 0, 0, 2, 7 },
+                { 8, 0, 0, 2, 0, 9, 0, 0, 5 },
+                { 2, 4, 0, 0, 6, 0, 0, 0, 0 },
+                { 0, 0, 8, 4, 7, 0, 0, 1, 0 },
+                { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
+                { 7, 0, 0, 0, 0, 8, 2, 9, 4 } 
+            };
+
+            var s = new SearchState(data);
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("3|8|2║9| | ║ | |1");
+            sb.AppendLine("─┼─┼─╬─┼─┼─╬─┼─┼─");
+            sb.AppendLine(" | | ║ | | ║ |5|2");
+            sb.AppendLine("─┼─┼─╬─┼─┼─╬─┼─┼─");
+            sb.AppendLine(" |1| ║ |2|7║3| | ");
+            sb.AppendLine("═╬═╬═╬═╬═╬═╬═╬═╬═");
+            sb.AppendLine(" | | ║ |4| ║ |2|7");
+            sb.AppendLine("─┼─┼─╬─┼─┼─╬─┼─┼─");
+            sb.AppendLine("8| | ║2| |9║ | |5");
+            sb.AppendLine("─┼─┼─╬─┼─┼─╬─┼─┼─");
+            sb.AppendLine("2|4| ║ |6| ║ | | ");
+            sb.AppendLine("═╬═╬═╬═╬═╬═╬═╬═╬═");
+            sb.AppendLine(" | |8║4|7| ║ |1| ");
+            sb.AppendLine("─┼─┼─╬─┼─┼─╬─┼─┼─");
+            sb.AppendLine("5|2| ║ | | ║ | | ");
+            sb.AppendLine("─┼─┼─╬─┼─┼─╬─┼─┼─");
+            sb.AppendLine("7| | ║ | |8║2|9|4");
+
+            var pretty = s.Pretty();
+
+            Assert.AreEqual(sb.ToString(), pretty);
+        }
+
+        [TestMethod]
+        public void AsArrayTest()
+        {
+            var data = new int[,]
+            {
+                { 3, 8, 2, 9, 0, 0, 0, 0, 1 },
+                { 0, 0, 0, 0, 0, 0, 0, 5, 2 },
+                { 0, 1, 0, 0, 2, 7, 3, 0, 0 },
+                { 0, 0, 0, 0, 4, 0, 0, 2, 7 },
+                { 8, 0, 0, 2, 0, 9, 0, 0, 5 },
+                { 2, 4, 0, 0, 6, 0, 0, 0, 0 },
+                { 0, 0, 8, 4, 7, 0, 0, 1, 0 },
+                { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
+                { 7, 0, 0, 0, 0, 8, 2, 9, 4 }
+            };
+
+            var s = new SearchState(data);
+
+            var array = s.ToArray();
+
+            foreach (var i in Enumerable.Range(0, 9))
+            {
+                foreach (var j in Enumerable.Range(0, 9))
+                {
+                    Assert.AreEqual(data[i, j], array[i, j]);
+                }
+            }
         }
     }
 }

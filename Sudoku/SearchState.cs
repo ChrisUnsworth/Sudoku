@@ -22,6 +22,34 @@ namespace Sudoku
             }
         }
 
+        public SearchState(int[,] values)
+        {
+            _data = new int[9, 9];
+
+            foreach (var i in Enumerable.Range(0, 9))
+            {
+                foreach (var j in Enumerable.Range(0, 9))
+                {
+                    _data[i, j] = (int)(values[j, i].AsNumbers() ?? Numbers.Any);
+                }
+            }
+        }
+
+        public int[,] ToArray()
+        {
+            var result = new int[9, 9];
+
+            foreach (var i in Enumerable.Range(0, 9))
+            {
+                foreach (var j in Enumerable.Range(0, 9))
+                {
+                    result[j, i] = this[i, j] ?? 0;
+                }
+            }
+
+            return result;
+        }
+
         public bool IsSolution  => 
             Enumerable.Range(0, 9).All(i => Enumerable.Range(0, 9).All(j => this[i, j].HasValue));
 

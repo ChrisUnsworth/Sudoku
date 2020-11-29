@@ -20,7 +20,7 @@ namespace Sudoku
         public Solver(SearchState start)
         {
             _start = start;
-            _variables = new List<VariableInteger>(9 * 9);
+            _variables = Enumerable.Repeat((VariableInteger)null, 9 * 9).ToList();
             SetVariables();
             _constraints = new List<IConstraint>();
             AddAllDiffConstraints();
@@ -44,12 +44,15 @@ namespace Sudoku
 
         private void Solve()
         {
+            if (_solved) return;
             var it = GetSolutions().GetEnumerator();
-            if (!it.MoveNext())
+            if (it.MoveNext())
             {
                 _solution = it.Current;
-                _solutionIsUnique = it.MoveNext();
+                _solutionIsUnique = !it.MoveNext();
             }
+
+            _solved = true;
         }
 
         private VariableInteger this[int x, int y]
@@ -123,9 +126,11 @@ namespace Sudoku
         {
             IState<int> state = new StateInteger(_variables, _constraints);
 
-            state.StartSearch(out StateOperationResult searchResult);
+            state.StartSearch(out StateOperationResult searchResult, out IList<IDictionary<string, IVariable<int>>> solutions);
 
-            while (searchResult == StateOperationResult.Solved)
+            if (searchResult != StateOperationResult.Solved) yield break;
+
+            foreach (var result in solutions)
             {
                 var solution = new SearchState();
 
@@ -133,7 +138,7 @@ namespace Sudoku
                 {
                     foreach (var y in Enumerable.Range(0, 9))
                     {
-                        solution[x, y] = this[x, y].Integer;
+                        solution[x, y] = result[$"{x}_{y}"].InstantiatedValue;
                     }
                 }
 
