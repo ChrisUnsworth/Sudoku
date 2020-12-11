@@ -75,6 +75,16 @@ namespace Sudoku.Tests
             }
 
             Assert.IsFalse(s.CanBe(8, 8, 6), $"Can't be 6");
+
+            s.SetNot(8, 8, 1);
+            s.SetNot(8, 8, 2);
+            s.SetNot(8, 8, 3);
+            s.SetNot(8, 8, 4);
+            s.SetNot(8, 8, 7);
+            s.SetNot(8, 8, 8);
+            s.SetNot(8, 8, 9);
+
+            Assert.AreEqual(s[8,8], 5);
         }
 
         [TestMethod]
@@ -135,6 +145,26 @@ namespace Sudoku.Tests
             sb.AppendLine(" | |7║ | | ║ | | ");
 
             Assert.AreEqual(sb.ToString(), s.Pretty());
+        }
+
+        [TestMethod]
+        public void RowIndicesTest()
+        {
+            var row = SearchState.RowIndices(3).ToList();
+
+            foreach (var (_, y) in row) Assert.AreEqual(3, y);
+
+            foreach (var i in Enumerable.Range(0, 9)) Assert.AreEqual(i, row[i].x);
+        }
+
+        [TestMethod]
+        public void ColumnIndicesTest()
+        {
+            var row = SearchState.ColumnIndices(3).ToList();
+
+            foreach (var (x, _) in row) Assert.AreEqual(3, x);
+
+            foreach (var i in Enumerable.Range(0, 9)) Assert.AreEqual(i, row[i].y);
         }
     }
 }

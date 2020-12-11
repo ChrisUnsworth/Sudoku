@@ -15,7 +15,7 @@ namespace Sudoku
         Seven = 128,
         Eight = 256,
         Nine = 512,
-        Any = 1022        
+        Any = 1022
     }
 
     public static class NumberExtensions
