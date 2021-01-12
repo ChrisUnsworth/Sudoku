@@ -8,9 +8,9 @@ namespace Sudoku
 {
     public class ForwardChecking : ISolver
     {
-        public IState Solve(IState puzzle) => Solve(new SearchState(puzzle));
+        public ISearchState Solve(IState puzzle) => Solve(new SearchState(puzzle));
 
-        public IState Solve(ISearchState puzzle)
+        public ISearchState Solve(ISearchState puzzle)
         {
             var frontier = Sets.All.Where(p => puzzle[p].HasValue).ToList();
 

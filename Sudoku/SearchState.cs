@@ -1,8 +1,10 @@
-﻿using Sudoku.common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using Sudoku.common;
+using Sudoku.utils;
 
 namespace Sudoku
 {
@@ -23,6 +25,19 @@ namespace Sudoku
             }
         }
 
+        public SearchState(int[,] data)
+        {
+            _data = new int[9, 9];
+
+            foreach (var i in Enumerable.Range(0, 9))
+            {
+                foreach (var j in Enumerable.Range(0, 9))
+                {
+                    _data[i, j] = data[i, j] > 0 ? (int)data[i, j].AsNumbers() : 1022;
+                }
+            }
+        }
+
         public SearchState(SearchState state)
         {
             _data = new int[9, 9];
@@ -31,7 +46,8 @@ namespace Sudoku
             {
                 foreach (var j in Enumerable.Range(0, 9))
                 {
-                    _data[i, j] = state.BitDomain(i, j);
+
+                    _data[i, j] = state[i, j].HasValue ? state.BitDomain(i, j) : 1022;
                 }
             }
         }
@@ -76,17 +92,12 @@ namespace Sudoku
             set => this[p.x, p.y]  = value;
         }
 
+        public ISet<int> Domain((int, int) i) => Domain(i.Item1, i.Item2);
         public ISet<int> Domain(int x, int y) => Enumerable.Range(1, 9).Where(i => CanBe(x, y, i)).ToHashSet();
 
+        public int BitDomain((int, int) i) => BitDomain(i.Item1, i.Item2);
         public int BitDomain(int x, int y) => _data[x, y];
 
-        public static IEnumerable<(int x, int y)> RowIndices(int i) => Enumerable.Range(0, 9).Select(j => (j, i));
-
-        public static IEnumerable<(int x, int y)> ColumnIndices(int i) => Enumerable.Range(0, 9).Select(j => (i, j));
-
-        public static IEnumerable<(int x, int y)> SquareDomains(int i) => 
-            Enumerable.Range(0, 3).SelectMany(x => Enumerable.Range(0, 3).Select(y => (x + (i % 3) * 3, y + (i / 3) * 3)));
-        
 
         public string Pretty()
         {
@@ -111,19 +122,32 @@ namespace Sudoku
             return sb.ToString();
         }
 
+        public bool CanBe((int, int) i, int val) => CanBe(i.Item1, i.Item2, val);
         public bool CanBe(int x, int y, int val)
         {
             var bitVal = (int)Math.Pow(2, val);
             return (bitVal & _data[x, y]) == bitVal;
         }
 
-        public void SetNot(int x, int y, int val)
+        public bool SetNot((int, int) i, int val) => DomainMinus(i.Item1, i.Item2, (int)Math.Pow(2, val));
+        public bool SetNot(int x, int y, int val) => DomainMinus(x, y, (int)Math.Pow(2, val));
+
+        public bool DomainMinus((int, int) i, int domain) => DomainMinus(i.Item1, i.Item2, domain);
+        public bool DomainMinus(int x, int y, int domain)
         {
-            var bitVal = (int)Math.Pow(2, val);
-            var bitNotVal = 1022 - bitVal;
-            _data[x, y] = _data[x, y] & bitNotVal;
+            if ((_data[x, y] & domain) == 0) return false;
+
+            _data[x, y] = _data[x, y] & ~domain;
+            return true;
         }
 
         private bool OneBitSet(int i) => (i & (i - 1)) == 0;
+
+        public int[,] ToArray()
+        {
+            var result = new int[9, 9];
+            foreach (var i in Sets.All) result[i.x, i.y] = this[i] ?? 0;
+            return result;
+        }
     }
 }

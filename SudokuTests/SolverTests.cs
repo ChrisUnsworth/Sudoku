@@ -11,6 +11,28 @@ namespace SudokuTests
     public class SolverTests
     {
         [TestMethod()]
+        public void NotUniqueTest()
+        {
+            var data = new int[,]
+            {
+                { 3, 8, 2, 0, 0, 0, 0, 0, 1 },
+                { 0, 0, 0, 0, 0, 0, 0, 5, 2 },
+                { 0, 1, 0, 0, 2, 0, 3, 0, 0 },
+                { 0, 0, 0, 0, 4, 0, 0, 2, 7 },
+                { 8, 0, 0, 2, 0, 9, 0, 0, 5 },
+                { 2, 4, 0, 0, 6, 0, 0, 0, 0 },
+                { 0, 0, 8, 0, 7, 0, 0, 1, 0 },
+                { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
+                { 7, 0, 0, 0, 0, 8, 2, 9, 4 }
+            };
+
+            var solver = new Solver(new SearchState(data));
+
+            Assert.IsTrue(solver.HasSolution);
+            Assert.IsFalse(solver.HasUniqueSolution);
+        }
+
+        [TestMethod()]
         public void SimpleSolveTest()
         {
             var data = new int[,]

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sudoku.Tests
+namespace SudokuTests
 {
     [TestClass()]
     public class SearchStateTests
@@ -147,23 +147,15 @@ namespace Sudoku.Tests
         }
 
         [TestMethod]
-        public void RowIndicesTest()
+        public void DomainMinusTest()
         {
-            var row = SearchState.RowIndices(3).ToList();
+            var s = new SearchState();
 
-            foreach (var (_, y) in row) Assert.AreEqual(3, y);
+            Assert.AreEqual(0b111_111_111_0, s.BitDomain(0, 0));
 
-            foreach (var i in Enumerable.Range(0, 9)) Assert.AreEqual(i, row[i].x);
-        }
+            s.DomainMinus(0, 0, 0b000_111_000_0);
 
-        [TestMethod]
-        public void ColumnIndicesTest()
-        {
-            var row = SearchState.ColumnIndices(3).ToList();
-
-            foreach (var (x, _) in row) Assert.AreEqual(3, x);
-
-            foreach (var i in Enumerable.Range(0, 9)) Assert.AreEqual(i, row[i].y);
+            Assert.AreEqual(0b111_000_111_0, s.BitDomain(0, 0));
         }
     }
 }

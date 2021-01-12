@@ -8,5 +8,7 @@ namespace Sudoku.common
     {
         int? this[int x, int y] { get; set; }
         int? this[(int x, int y) p] { get; set; }
+
+        int[,] ToArray();
     }
 }

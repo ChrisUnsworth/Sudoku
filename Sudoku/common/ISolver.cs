@@ -6,7 +6,7 @@ namespace Sudoku.common
 {
     public interface ISolver
     {
-        IState Solve(IState puzzle);
-        IState Solve(ISearchState puzzle);
+        ISearchState Solve(IState puzzle);
+        ISearchState Solve(ISearchState puzzle);
     }
 }
