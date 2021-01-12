@@ -1,6 +1,7 @@
 ﻿using Decider.Csp.BaseTypes;
 using Decider.Csp.Global;
 using Decider.Csp.Integer;
+using Sudoku.common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,12 @@ namespace Sudoku
     {
         private List<VariableInteger> _variables;
         private List<IConstraint> _constraints;
-        private SearchState _start;
-        private SearchState _solution;
+        private ISearchState _start;
+        private IState _solution;
         private bool _solutionIsUnique;
         private bool _solved = false;
 
-        public Solver(SearchState start)
+        public Solver(ISearchState start)
         {
             _start = start;
             _variables = Enumerable.Repeat((VariableInteger)null, 9 * 9).ToList();
@@ -27,9 +28,9 @@ namespace Sudoku
             AddState();
         }
 
-        public SearchState Start => _start;
+        public ISearchState Start => _start;
 
-        public SearchState Solution
+        public IState Solution
         {
             get
             {
@@ -93,6 +94,7 @@ namespace Sudoku
             }
 
             // squares
+            
             foreach (var s_x in Enumerable.Range(0, 3))
             {
                 foreach (var s_y in Enumerable.Range(0, 3))
