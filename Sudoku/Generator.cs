@@ -54,6 +54,65 @@ namespace Sudoku
             return (DifficultyOf(s), s.Copy());
         }
 
+        public bool TryBuild(int difficulty, out IState problem)
+        {
+            if (difficulty < 0 || difficulty >= _solvers.Count) throw new ArgumentOutOfRangeException();
+
+            int i;
+            (i, problem) = Next();
+
+            if (i == difficulty) return true;
+
+            return i < difficulty
+                ? TryMakeHarder(difficulty, problem as ISearchState, ref problem)
+                : TryMakeEasier(difficulty, problem as ISearchState, ref problem);
+        }
+
+        private bool TryMakeHarder(int target, ISearchState seed, ref IState problem)
+        {
+            var setSquares = Sets.All.Where(x => seed[x].HasValue);
+
+            foreach (var x in setSquares)
+            {
+                var copy = seed.Copy();
+                copy.Reset(x);
+                var dif = DifficultyOf(copy);
+                if (dif == target)
+                {
+                    problem = copy;
+                    return true;
+                }
+
+                if (dif < target && TryMakeHarder(target, copy, ref problem)) return true;
+            }
+
+            return false;
+        }
+
+        private bool TryMakeEasier(int target, ISearchState seed, ref IState problem)
+        {
+            var unsetSquares = Sets.All.Where(x => !seed[x].HasValue);
+            var solution = _solvers.Last().Solve(seed.Copy());
+
+            if (!solution.IsSolution) return false;
+
+            foreach (var x in unsetSquares)
+            {
+                var copy = seed.Copy();
+                copy[x] = solution[x];
+                var dif = DifficultyOf(copy);
+                if (dif == target)
+                {
+                    problem = copy;
+                    return true;
+                }
+
+                if (dif > target && TryMakeEasier(target, copy, ref problem)) return true;
+            }
+
+            return false;
+        }
+
         public int DifficultyOf(ISearchState puzzle)
         {
             var s = puzzle.Copy();

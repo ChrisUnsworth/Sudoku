@@ -21,6 +21,9 @@ namespace Sudoku.common
         bool DomainMinus(int x, int y, int domain);
         bool DomainMinus((int, int) i, int domain);
 
+        void Reset(int x, int y);
+        void Reset((int, int) i);
+
         ISearchState Copy();
 
         bool IsSolution { get; }

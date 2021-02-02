@@ -149,5 +149,9 @@ namespace Sudoku
             foreach (var i in Sets.All) result[i.x, i.y] = this[i] ?? 0;
             return result;
         }
+
+        public void Reset(int x, int y) => _data[x, y] = 1022;
+
+        public void Reset((int, int) i) => Reset(i.Item1, i.Item2);
     }
 }
